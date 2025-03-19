@@ -1,5 +1,9 @@
 # Flow Navigation
 
+![Swift](https://img.shields.io/badge/swift-6.0-orange)
+![SPM Compatible](https://img.shields.io/badge/SPM-Compatible-blue)
+![License](https://img.shields.io/github/license/magnuskahr/swiftui-flow-navigation)
+
 Flow Navigation is a **declarative navigation system** for SwiftUI that enables **linear, structured, type-safe flows**.  
 It provides a **seamless way to set up screens**, **pass data** between them, and **handle navigation logic dynamically**.
 
