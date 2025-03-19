@@ -1,20 +1,32 @@
 # Flow Navigation
 
-Flow Navigation is a **declarative navigation system** for SwiftUI that enables **structured, type-safe flows**.  
-It provides a **seamless way to transition between screens**, **pass data** between them, and **handle navigation logic dynamically**.
+Flow Navigation is a **declarative navigation system** for SwiftUI that enables **linear, structured, type-safe flows**.  
+It provides a **seamless way to set up screens**, **pass data** between them, and **handle navigation logic dynamically**.
 
 Using Flow Navigation, you can define your linear flow simply as:
 
 ```swift
 Flow {
+
     IntroductionScreen()
+    
     UserSelectionScreen(users: users)
+    
     FlowReader { proxy in
+        // Read data typesafe from the user selection screen
         let selection = try proxy.data(for: UserSelectionScreen.self)
         return ConfirmationScreen(user: selection)
     }
+    
 }
 ```
+
+---
+
+> [!IMPORTANT]
+> This framework is currently in beta and has not been battle-tested.
+> I am actively developing an app to **dogfood** it, but feel free to use it and report any issues.  
+> Your feedback is highly valuable in improving **Flow Navigation**! 🚀
 
 ---
 
@@ -24,8 +36,8 @@ Flow {
 
 Each screen **conforms to `FlowScreen`**.
 
-They have a static screenId, and defines the body and output of the screen.
-The body method has the control parameter, that is used to advance the flow to the next screen.
+Each screen has a static screenId and defines both its body and Output type.
+The body method receives a control parameter, which is used to advance the flow.
 
 ```swift
 struct IntroductionScreen: FlowScreen {
@@ -78,15 +90,33 @@ Flow {
 }
 ```
 
-The flow will then be:
+The flow progresses linearly as follows:
 
-1. An introduction is first shown.
-2. Then a screen to select a user; the selected user is passed on to the flow system.
-3. A `FlowReader` is used to read the selected user id and passes it along to the confirmation screen.
+1. The `IntroductionScreen` is shown first.
+2. The `UserSelectionScreen` allows the user to select a user, passing the selected ID to the flow.
+3. `FlowReader` reads the selected user’s ID and passes it to the `ConfirmationScreen`.
 
 ## 🚀 Installation
 
-Swift Package Manager (SPM)
-1.    Open Xcode and go to File > Swift Packages > Add Package Dependency
-2.    Enter the repository URL: https://github.com/your-repo/FlowNavigation.git
-3.    Select the latest version and add it to your project.
+To use this package in a SwiftPM project, you need to set it up as a package dependency:
+
+```swift
+// swift-tools-version:6.0
+import PackageDescription
+
+let package = Package(
+  name: "MyPackage",
+  dependencies: [
+    .package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "0.0.1")
+    )
+  ],
+  targets: [
+    .target(
+      name: "MyTarget",
+      dependencies: [
+        .product(name: "FlowNavigation", package: "swiftui-flow-navigation")
+      ]
+    )
+  ]
+)
+```
