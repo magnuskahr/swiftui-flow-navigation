@@ -23,7 +23,6 @@ let package = Package(
             name: "FlowNavigationTests",
             dependencies: ["FlowNavigation"]
         ),
-    ]
-    ,
+    ],
     swiftLanguageModes: [.version("6"), .v5]
 )
