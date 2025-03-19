@@ -4,6 +4,7 @@ import SwiftUI
 struct FlowScreenView: View {
     let body: AnyView
     
+    @MainActor
     init<S: FlowScreen>(
         screen: S,
         control: FlowScreenControl<S.Output>
