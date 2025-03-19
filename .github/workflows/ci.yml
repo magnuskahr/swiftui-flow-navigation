@@ -26,4 +26,4 @@ jobs:
         run: swift build
 
       - name: Run Tests
-        run: swift test --enable-code-coverage
+        run: swift test -Xswiftc -strict-concurrency=complete --enable-code-coverage
