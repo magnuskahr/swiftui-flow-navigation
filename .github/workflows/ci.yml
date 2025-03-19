@@ -8,20 +8,20 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest  # Use macOS runner for Swift tests
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # Pulls your repo into the CI environment
+        uses: actions/checkout@v4 # Pulls your repo into the CI environment
 
-      - name: Install Swift (if necessary)
-        run: |
-          swift --version  # Check installed Swift version
+      - name: Set Up Latest Swift
+        uses: swift-actions/setup-swift@v2
+
+      - name: Get Swift Version
+        run: swift --version  # Should print Swift 6.0.2
 
       - name: Build the Project
-        run: |
-          swift build
+        run: swift build
 
       - name: Run Tests
-        run: |
-          swift test --enable-code-coverage
+        run: swift test --enable-code-coverage
