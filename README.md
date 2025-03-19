@@ -75,17 +75,73 @@ struct UserSelectionScreen: FlowScreen {
 }
 ```
 
+> [!NOTE]
+> It can be a good idea to have a dedicated TaskButton view to handle the `FlowScreenControl`.
+> FlowNavigation does not ship with one.
+> <details>
+> <summary>... but its easely created</summary>
+> ```swift
+> import SwiftUI
+> 
+> struct TaskButton<Label>: View where Label: View {
+> 
+>     @State private var runTask = false
+> 
+>     private let label: Label
+>     private let action: @Sendable () async -> Void
+> 
+>     init(
+>         @_inheritActorContext _ action: @escaping @Sendable () async -> Void,
+>         @ViewBuilder label: () -> Label
+>     ) {
+>         self.label = label()
+>         self.action = action
+>     }
+> 
+>     init<S: StringProtocol>(
+>         _ title: S,
+>         @_inheritActorContext _ action: @escaping @Sendable () async -> Void
+>     ) where Label == Text {
+>         self.label = Text(title)
+>         self.action = action
+>     }
+> 
+>     var body: some View {
+>         Button {
+>             runTask = true
+>         } label: {
+>             label
+>         }
+>         .task(id: runTask, priority: .userInitiated) {
+>             guard runTask else { return }
+>             await action()
+>             runTask = false
+>         }
+>     }
+> }
+> ```
+> </detail>
+
 ### 2. Create a Flow
 
 A Flow defines the sequence of screens and automatically progresses when a screen completes.
+Use the flow as any other SwiftUI view.
+When a flow is finished, it will call the dismiss environment action, so its suitable for being shown in sheets.
 
 ```swift
-Flow {
-    IntroductionScreen()
-    UserSelectionScreen(users: users)
-    FlowReader { proxy in
-        let selection = try proxy.data(for: UserSelectionScreen.self)
-        return ConfirmationScreen(user: selection)
+var body: some View {
+    Button("Select user") {
+        showSelectUserFlow = true
+    }
+    .sheet(isPresented: $showSelectUserFlow) {
+        Flow {
+            IntroductionScreen()
+            UserSelectionScreen(users: users)
+            FlowReader { proxy in
+                let selection = try proxy.data(for: UserSelectionScreen.self)
+                return ConfirmationScreen(user: selection)
+            }
+        }
     }
 }
 ```
