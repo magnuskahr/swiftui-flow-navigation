@@ -82,44 +82,44 @@ struct UserSelectionScreen: FlowScreen {
 > <summary>... but its easely created</summary>
 >
 > ```swift
->   import SwiftUI
->   
->   struct TaskButton<Label>: View where Label: View {
->   
->       @State private var runTask = false
->   
->       private let label: Label
->       private let action: @Sendable () async -> Void
->   
->       init(
->           @_inheritActorContext _ action: @escaping @Sendable () async -> Void,
->           @ViewBuilder label: () -> Label
->       ) {
->           self.label = label()
->           self.action = action
->       }
->   
->       init<S: StringProtocol>(
->           _ title: S,
->           @_inheritActorContext _ action: @escaping @Sendable () async -> Void
->       ) where Label == Text {
->           self.label = Text(title)
->           self.action = action
->       }
->   
->       var body: some View {
->           Button {
->               runTask = true
->           } label: {
->               label
->           }
->           .task(id: runTask, priority: .userInitiated) {
->               guard runTask else { return }
->               await action()
->               runTask = false
->           }
->       }
->   }
+> import SwiftUI
+> 
+> struct TaskButton<Label>: View where Label: View {
+> 
+>     @State private var runTask = false
+> 
+>     private let label: Label
+>     private let action: @Sendable () async -> Void
+> 
+>     init(
+>         @_inheritActorContext _ action: @escaping @Sendable () async -> Void,
+>         @ViewBuilder label: () -> Label
+>     ) {
+>         self.label = label()
+>         self.action = action
+>     }
+> 
+>     init<S: StringProtocol>(
+>         _ title: S,
+>         @_inheritActorContext _ action: @escaping @Sendable () async -> Void
+>     ) where Label == Text {
+>         self.label = Text(title)
+>         self.action = action
+>     }
+> 
+>     var body: some View {
+>         Button {
+>             runTask = true
+>         } label: {
+>             label
+>         }
+>         .task(id: runTask, priority: .userInitiated) {
+>             guard runTask else { return }
+>             await action()
+>             runTask = false
+>         }
+>     }
+> }
 > ```
 > </detail>
 
