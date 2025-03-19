@@ -20,7 +20,10 @@ jobs:
           swift-version: "6"
 
       - name: Get Swift Version
-        run: swift --version  # Should print Swift 6.0.2
+        run: swift --version  # Should print Swift >= 6.0.0
+
+      - name: Get Swift Tool Version
+        run: swift package tools-version  # Should print Swift >= 6.0
 
       - name: Build the Project
         run: swift build -Xswiftc -strict-concurrency=complete
