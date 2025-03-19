@@ -185,6 +185,7 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
     }
     
     /// Creates the control handler for a push
+    @MainActor
     private func control(
         push: NavigationPush
     ) -> FlowScreenControlHandler {

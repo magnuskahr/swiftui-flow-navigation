@@ -22,7 +22,7 @@ jobs:
       - name: Get Swift Version
         run: swift --version  # Should print Swift >= 6.0.0
 
-      - name: Get Swift Tool Version
+      - name: Get Swift Tools Version
         run: swift package tools-version  # Should print Swift >= 6.0
 
       - name: Build the Project
