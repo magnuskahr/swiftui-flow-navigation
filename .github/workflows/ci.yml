@@ -23,7 +23,7 @@ jobs:
         run: swift --version  # Should print Swift 6.0.2
 
       - name: Build the Project
-        run: swift build
+        run: swift build -Xswiftc -strict-concurrency=complete
 
       - name: Run Tests
-        run: swift test -Xswiftc -strict-concurrency=complete --enable-code-coverage
+        run: swift test -Xswiftc -strict-concurrency=complete -Xswiftc --enable-code-coverage
