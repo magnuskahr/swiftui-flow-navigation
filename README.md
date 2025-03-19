@@ -1,6 +1,7 @@
 # Flow Navigation
 
 ![Swift](https://img.shields.io/badge/swift-6.0-orange)
+![Swift](https://img.shields.io/badge/swift-5.7-orange)
 ![SPM Compatible](https://img.shields.io/badge/SPM-Compatible-blue)
 ![License](https://img.shields.io/github/license/magnuskahr/swiftui-flow-navigation)
 
@@ -168,7 +169,7 @@ import PackageDescription
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "0.1.0")
+    .package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "0.2.0")
     )
   ],
   targets: [
