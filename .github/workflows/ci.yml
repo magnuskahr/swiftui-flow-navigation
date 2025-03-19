@@ -1,0 +1,27 @@
+name: Swift CI
+
+on:
+  pull_request:  # Runs when pushing to a pull request
+    branches: [main]
+  push:  # Runs when merging to main
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-latest  # Use macOS runner for Swift tests
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Pulls your repo into the CI environment
+
+      - name: Install Swift (if necessary)
+        run: |
+          swift --version  # Check installed Swift version
+
+      - name: Build the Project
+        run: |
+          swift build
+
+      - name: Run Tests
+        run: |
+          swift test --enable-code-coverage
