@@ -168,8 +168,7 @@ import PackageDescription
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "0.4.0")
-    )
+    .package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "0.5.0")
   ],
   targets: [
     .target(
