@@ -7,7 +7,9 @@ let package = Package(
     name: "swiftui-flow-navigation",
     platforms: [
         .iOS(.v16),
-        .macOS(.v13)
+        .macOS(.v13),
+        .tvOS(.v16),
+        .watchOS(.v9)
     ],
     products: [
         .library(
@@ -22,7 +24,7 @@ let package = Package(
         .testTarget(
             name: "FlowNavigationTests",
             dependencies: ["FlowNavigation"]
-        ),
+        )
     ],
     swiftLanguageModes: [.version("6"), .v5]
 )
