@@ -8,7 +8,7 @@ var dependencies: [Package.Dependency] = []
 
 if ProcessInfo.processInfo.environment["DEPENDENCY_DOCC"] == "1" {
     dependencies.append(
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.3")
+        .package(url: "https://github.com/apple/swift" + "-docc-plugin", from: "1.4.3")
     )
 }
 
