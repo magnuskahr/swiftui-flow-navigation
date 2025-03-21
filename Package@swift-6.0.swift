@@ -7,8 +7,9 @@ import Foundation
 var dependencies: [Package.Dependency] = []
 
 if ProcessInfo.processInfo.environment["DEPENDENCY_DOCC"] == "1" {
+    let name = ["swift", "docc", "plugin"].joined(separator: "-")
     dependencies.append(
-        .package(url: "https://github.com/apple/swift" + "-docc-plugin", from: "1.4.3")
+        .package(url: "https://github.com/apple/" + name, from: "1.4.3")
     )
 }
 
