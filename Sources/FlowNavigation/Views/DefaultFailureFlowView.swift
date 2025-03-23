@@ -9,7 +9,8 @@ public struct DefaultFailureFlowView: View {
     }
 
     public var body: some View {
-        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+        #if swift(>=5.9)
+        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             ContentUnavailableView(
                 "Error",
                 systemImage: "exclamationmark.triangle.fill",
@@ -18,5 +19,8 @@ public struct DefaultFailureFlowView: View {
         } else {
             Text(error.localizedDescription)
         }
+        #else
+        Text(error.localizedDescription)
+        #endif
     }
 }
