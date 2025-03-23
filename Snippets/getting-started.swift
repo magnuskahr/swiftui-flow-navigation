@@ -19,8 +19,15 @@ struct NameFlowScreen: FlowScreen {
     }
 }
 // snippet.Flow1
-Flow {
-    NameFlowScreen()
+// snippet.hide
+struct _Flow1: View {
+    var body: some View {
+        // snippet.show
+        Flow {
+            NameFlowScreen()
+        }
+        // snippet.hide
+    }
 }
 // snippet.TextInputFlowScreen
 struct TextInputFlowScreen: FlowScreen {
@@ -42,38 +49,95 @@ struct TextInputFlowScreen: FlowScreen {
     }
 }
 // snippet.Flow2
-Flow {
-    TextInputFlowScreen(title: "Name")
-        .alias("name")
+// snippet.hide
+struct _Flow2: View {
+    var body: some View {
+        // snippet.show
+        Flow {
+            TextInputFlowScreen(title: "Name")
+                .alias("name")
 
-    TextInputFlowScreen(title: "Email")
-        .alias("email")
+            TextInputFlowScreen(title: "Email")
+                .alias("email")
+        }
+        // snippet.hide
+    }
 }
 // snippet.Flow3
-Flow {
-    TextInputFlowScreen(title: "Name")
-        .alias("name")
+// snippet.hide
+struct _Flow3: View {
+    var body: some View {
+        // snippet.show
+        Flow {
+            TextInputFlowScreen(title: "Name")
+                .alias("name")
 
-    TextInputFlowScreen(title: "Email")
-        .alias("email")
+            TextInputFlowScreen(title: "Email")
+                .alias("email")
 
-    SecureInputFlowScreen(title: "Password")
+            SecureInputFlowScreen(title: "Password")
 
-    FlowReader { proxy in
-        SubmissionFlowScreen(
-            name: try proxy.data(for: TextInputFlowScreen.self, alias: "name"),
-            email: try proxy.data(for: TextInputFlowScreen.self, alias: "email"),
-            password: try proxy.data(for: SecureInputFlowScreen.self)
-        )
+            FlowReader { proxy in
+                SubmissionFlowScreen(
+                    name: try proxy.data(for: TextInputFlowScreen.self, alias: "name"),
+                    email: try proxy.data(for: TextInputFlowScreen.self, alias: "email"),
+                    password: try proxy.data(for: SecureInputFlowScreen.self)
+                )
+            }
+        }
+        // snippet.hide
     }
 }
+
 // snippet.Flow4
-Flow {
-    SelectUserIdFlowScreen()
+// snippet.hide
+struct _Flow4: View {
+    let service = Service()
+    var body: some View {
+        // snippet.show
+        Flow {
+            SelectUserIdFlowScreen()
 
-    FlowReader { proxy in
-        let userId = try proxy.data(for: SelectUserIdFlowScreen.self)
-        let user = try await service.loadUser(id: userId)
-        return ConfirmUserScreen(user: user)
+            FlowReader { proxy in
+                let userId = try proxy.data(for: SelectUserIdFlowScreen.self)
+                let user = try await service.loadUser(id: userId)
+                return ConfirmUserScreen(user: user)
+            }
+        }
+        // snippet.hide
     }
 }
+// snippet.end
+struct SubmissionFlowScreen: FlowScreen {
+    let name: String
+    let email: String
+    let password: String
+    static let screenId = "Submission"
+    func body(control: FlowScreenControl<String>) -> some View {
+        EmptyView()
+    }
+}
+struct SecureInputFlowScreen: FlowScreen {
+    let title: String
+    static let screenId = "SecureInput"
+    func body(control: FlowScreenControl<String>) -> some View {
+        EmptyView()
+    }
+}
+struct SelectUserIdFlowScreen: FlowScreen {
+    static let screenId = "SelectUser"
+    func body(control: FlowScreenControl<String>) -> some View {
+        EmptyView()
+    }
+}
+struct ConfirmUserScreen: FlowScreen {
+    let user: String
+    static let screenId = "Confirm"
+    func body(control: FlowScreenControl<String>) -> some View {
+        EmptyView()
+    }
+}
+struct Service {
+    func loadUser(id: String) async throws -> String { id }
+}
+
