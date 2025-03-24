@@ -1,6 +1,7 @@
+// snippet.hide
 import FlowNavigation
 import SwiftUI
-
+// snippet.show
 struct CompletionScreen: FlowScreen {
     static let screenId = "Completion"
     
