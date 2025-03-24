@@ -4,4 +4,5 @@ Flow Navigation is a **declarative navigation system** for SwiftUI that enables 
 
 ## Articles
 
-<doc:hiding-the-back-button>
+* <doc:getting-started>
+* <doc:hiding-the-back-button>
