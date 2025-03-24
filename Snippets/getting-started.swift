@@ -26,7 +26,7 @@ struct _Flow1: View {
         Flow {
             NameFlowScreen()
         }
-        // snippet.hide
+        // snippet.end
     }
 }
 // snippet.TextInputFlowScreen
@@ -56,11 +56,11 @@ struct _Flow2: View {
         Flow {
             TextInputFlowScreen(title: "Name")
                 .alias("name")
-
+            
             TextInputFlowScreen(title: "Email")
                 .alias("email")
         }
-        // snippet.hide
+        // snippet.end
     }
 }
 // snippet.Flow3
@@ -71,12 +71,12 @@ struct _Flow3: View {
         Flow {
             TextInputFlowScreen(title: "Name")
                 .alias("name")
-
+            
             TextInputFlowScreen(title: "Email")
                 .alias("email")
-
+            
             SecureInputFlowScreen(title: "Password")
-
+            
             FlowReader { proxy in
                 SubmissionFlowScreen(
                     name: try proxy.data(for: TextInputFlowScreen.self, alias: "name"),
@@ -85,7 +85,7 @@ struct _Flow3: View {
                 )
             }
         }
-        // snippet.hide
+        // snippet.end
     }
 }
 
@@ -97,14 +97,17 @@ struct _Flow4: View {
         // snippet.show
         Flow {
             SelectUserIdFlowScreen()
-
-            FlowReader { proxy in
+            
+            // Notice how i specify the return type, this is only
+            // to support swift-tools-version 5.7
+            // If you use above that, you do not need to do so
+            FlowReader { proxy -> ConfirmUserScreen in
                 let userId = try proxy.data(for: SelectUserIdFlowScreen.self)
                 let user = try await service.loadUser(id: userId)
                 return ConfirmUserScreen(user: user)
             }
         }
-        // snippet.hide
+        // snippet.end
     }
 }
 // snippet.end
