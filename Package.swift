@@ -4,15 +4,6 @@
 import PackageDescription
 import Foundation
 
-var dependencies: [Package.Dependency] = []
-
-if ProcessInfo.processInfo.environment["DEPENDENCY_DOCC"] == "1" {
-    let name = ["swift", "docc", "plugin"].joined(separator: "-")
-    dependencies.append(
-        .package(url: "https://github.com/apple/" + name, from: "1.4.3")
-    )
-}
-
 let package = Package(
     name: "swiftui-flow-navigation",
     platforms: [
@@ -27,14 +18,13 @@ let package = Package(
             targets: ["FlowNavigation"]
         ),
     ],
-    dependencies: dependencies,
     targets: [
         .target(
             name: "FlowNavigation"
+        ),
+        .testTarget(
+            name: "FlowNavigationTests",
+            dependencies: ["FlowNavigation"]
         )
     ],
-    .testTarget(
-        name: "FlowNavigationTests",
-        dependencies: ["FlowNavigation"]
-    )
 )
