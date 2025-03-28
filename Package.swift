@@ -32,5 +32,9 @@ let package = Package(
         .target(
             name: "FlowNavigation"
         )
-    ]
+    ],
+    .testTarget(
+        name: "FlowNavigationTests",
+        dependencies: ["FlowNavigation"]
+    )
 )
