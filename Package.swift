@@ -26,5 +26,5 @@ let package = Package(
             name: "FlowNavigationTests",
             dependencies: ["FlowNavigation"]
         )
-    ],
+    ]
 )
