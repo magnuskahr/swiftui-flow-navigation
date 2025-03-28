@@ -28,23 +28,7 @@ public struct FlowReader: FlowScreenProvider {
     ///
     /// - Parameter handler: A closure that receives a `FlowProxy` and asynchronously returns a `FlowScreen`.
     /// - Throws: An error if the `FlowScreen` cannot be created.
-    public init<C>(handler: @escaping @MainActor (FlowProxy) async throws -> C) where C: FlowScreen {
-        self.handler = {
-            try await FlowScreenContainer(
-                screen: handler($0)
-            )
-        }
-    }
-    
-    /// Initializes a `FlowReader` with a pre-constructed `FlowScreenContainer`.
-    ///
-    /// This initializer is useful when you already have a `FlowScreenContainer` and want to return it directly.
-    /// The provided closure still has access to the `FlowProxy`, making it possible to modify or configure
-    /// the container dynamically based on prior screen outputs.
-    ///
-    /// - Parameter handler: A closure that receives a `FlowProxy` and asynchronously returns a `FlowScreenContainer`.
-    /// - Throws: An error if the `FlowScreenContainer` cannot be created.
-    public init(handler: @escaping @MainActor (FlowProxy) async throws -> FlowScreenContainer) {
+    public init(@Builder handler: @MainActor @escaping (FlowProxy) async throws -> FlowScreenContainer) {
         self.handler = handler
     }
     
@@ -57,6 +41,36 @@ public struct FlowReader: FlowScreenProvider {
     /// - Returns: A dynamically created `FlowScreenContainer`.
     /// - Throws: An error if the screen cannot be created.
     public func screen(proxy: FlowProxy) async throws -> FlowScreenContainer {
-        try await handler(proxy)
+        
+        
+        
+        return try await handler(proxy)
+    }
+    
+}
+public extension FlowReader {
+    @MainActor
+    @resultBuilder
+    struct Builder {
+        public static func buildBlock(_ component: FlowScreenContainer) -> FlowScreenContainer {
+            component
+        }
+        
+        public static func buildEither(first component: FlowScreenContainer) -> FlowScreenContainer {
+            component
+        }
+        
+        public static func buildEither(second component: FlowScreenContainer) -> FlowScreenContainer {
+            component
+        }
+        
+        public static func buildExpression(_ expression: FlowScreenContainer) -> FlowScreenContainer {
+            expression
+        }
+        
+        public static func buildExpression<S: FlowScreen>(_ expression: S) -> FlowScreenContainer {
+            FlowScreenContainer(screen: expression)
+        }
+
     }
 }
