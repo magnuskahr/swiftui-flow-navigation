@@ -41,10 +41,7 @@ public struct FlowReader: FlowScreenProvider {
     /// - Returns: A dynamically created `FlowScreenContainer`.
     /// - Throws: An error if the screen cannot be created.
     public func screen(proxy: FlowProxy) async throws -> FlowScreenContainer {
-        
-        
-        
-        return try await handler(proxy)
+        try await handler(proxy)
     }
     
 }

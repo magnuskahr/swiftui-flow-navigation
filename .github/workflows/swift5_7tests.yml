@@ -1,0 +1,29 @@
+name: Swift 5.7 CI
+
+on:
+  pull_request:  # Runs when pushing to a pull request
+    branches: [main]
+  push:  # Runs when merging to main
+    branches: [main]
+
+jobs:
+  run-tests:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Pulls your repo into the CI environment
+
+      - name: Set Up Latest Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "5.7"
+
+      - name: Get Swift Version
+        run: swift --version  # Should print Swift ~= 5.7
+
+      - name: Get Swift Tools Version
+        run: swift package tools-version  # Should print Swift ~= 5.7
+
+      - name: Run Tests - Swift 5.7
+        run: swift test
