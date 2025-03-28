@@ -1,4 +1,4 @@
-name: Swift CI
+name: Swift 6 CI
 
 on:
   pull_request:  # Runs when pushing to a pull request
@@ -25,5 +25,5 @@ jobs:
       - name: Get Swift Tools Version
         run: swift package tools-version  # Should print Swift >= 6.0
 
-      - name: Run Tests
+      - name: Run Tests - Swift 6
         run: swift test

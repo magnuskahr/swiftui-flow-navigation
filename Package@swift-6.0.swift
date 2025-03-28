@@ -6,6 +6,7 @@ import Foundation
 
 var dependencies: [Package.Dependency] = []
 
+// Obfuscation to prevent Swift Package Index to concluce its available
 if ProcessInfo.processInfo.environment["DEPENDENCY_DOCC"] == "1" {
     let name = ["swift", "docc", "plugin"].joined(separator: "-")
     dependencies.append(

@@ -6,6 +6,7 @@ import Foundation
 
 var dependencies: [Package.Dependency] = []
 
+// Obfuscation to prevent Swift Package Index to concluce its available
 if ProcessInfo.processInfo.environment["DEPENDENCY_DOCC"] == "1" {
     let name = ["swift", "docc", "plugin"].joined(separator: "-")
     dependencies.append(
@@ -32,5 +33,6 @@ let package = Package(
         .target(
             name: "FlowNavigation"
         )
+        // As the tests are build using Swift Testing, it is not available on before Swift 6
     ]
 )
