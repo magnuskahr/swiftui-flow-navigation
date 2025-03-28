@@ -101,7 +101,7 @@ struct _Flow4: View {
             FlowReader { proxy in
                 let userId = try proxy.data(for: SelectUserIdFlowScreen.self)
                 let user = try await service.loadUser(id: userId)
-                return ConfirmUserScreen(user: user)
+                ConfirmUserScreen(user: user)
             }
         }
         // snippet.end
