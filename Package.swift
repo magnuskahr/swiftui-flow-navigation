@@ -33,5 +33,6 @@ let package = Package(
         .target(
             name: "FlowNavigation"
         )
+        // As the tests are build using Swift Testing, it is not available on before Swift 6
     ]
 )
