@@ -98,10 +98,7 @@ struct _Flow4: View {
         Flow {
             SelectUserIdFlowScreen()
             
-            // Notice how i specify the return type, this is only
-            // to support swift-tools-version 5.7
-            // If you use above that, you do not need to do so
-            FlowReader { proxy -> ConfirmUserScreen in
+            FlowReader { proxy in
                 let userId = try proxy.data(for: SelectUserIdFlowScreen.self)
                 let user = try await service.loadUser(id: userId)
                 return ConfirmUserScreen(user: user)
