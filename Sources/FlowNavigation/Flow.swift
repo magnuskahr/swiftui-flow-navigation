@@ -47,6 +47,23 @@ import SwiftUI
 /// }
 /// ```
 ///
+/// ## Completion
+/// A flow completes when its out of screens to push.
+/// The default behavior is to just call the dismiss action of the environment.
+///
+/// To set a custom completion action, specify it in the trailing closure:
+///
+/// ```swift
+/// Flow {
+///     // Screens omitted
+/// } completion: { proxy in
+///     service.deleteUser(
+///         user: proxy.data(for: SelectUserForDeletionScreen.self)
+///     )
+///     return .dismiss
+/// }
+/// ```
+///
 /// ## Handling Failures and Unavailable States
 /// If no screens are available at runtime, the `unavailable` view is shown.
 /// If a screen fails, the `failure` view is displayed.
@@ -72,11 +89,19 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
         case failure(Error)
     }
     
+    public enum CompletionResult: Sendable {
+        /// The handler removed the flow
+        case handled
+        /// The handler asks the system to use the environment dismiss action
+        case dismiss
+    }
+    
     @Environment(\.dismiss) private var dismiss
     
     private let providers: [FlowScreenProvider]
     private let unavailable: Unavailable
     private let failure: (Error) -> Failure
+    private let completion: (FlowProxy) async throws -> CompletionResult
     
     @State private var root: Root?
     @State private var navigationpath = NavigationPath()
@@ -88,7 +113,9 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
     /// If no screens are available, a ``DefaultUnavailableFlowView`` is shown.
     /// If an error occurs, a ``DefaultFailureFlowView`` is presented.
     ///
-    /// - Parameter builder: A ``Flow/Builder`` result builder that defines the sequence of screens in the flow.
+    /// - Parameters:
+    ///    - builder: A ``Flow/Builder`` result builder that defines the sequence of screens in the flow.
+    ///    - completion: A closure receiving a ``FlowProxy`` to run when the flow completes
     ///
     /// ## Example
     /// ```swift
@@ -98,9 +125,11 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
     /// }
     /// ```
     public init(
-        @Builder screens builder: () -> [FlowScreenProvider]
+        @Builder screens builder: () -> [FlowScreenProvider],
+        completion: @escaping (FlowProxy) async throws -> CompletionResult = { _ in .dismiss }
     ) where Unavailable == DefaultUnavailableFlowView, Failure == DefaultFailureFlowView {
         self.providers = builder()
+        self.completion = completion
         self.unavailable = Unavailable()
         self.failure = {
             Failure(error: $0)
@@ -114,6 +143,7 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
     ///
     /// - Parameters:
     ///   - builder: A ``Flow/Builder`` result builder that defines the sequence of screens in the flow.
+    ///   - completion: A closure receiving a ``FlowProxy`` to run when the flow completes
     ///   - unavailable: A closure returning a custom view to be displayed when no screens are available.
     ///   - failure: A closure that receives an `Error` and returns a custom view for handling failures.
     ///
@@ -130,10 +160,12 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
     /// ```
     public init(
         @Builder screens builder: () -> [FlowScreenProvider],
+        completion: @escaping (FlowProxy) async throws -> CompletionResult = { _ in .dismiss },
         unavailable: () -> Unavailable,
         failure: @escaping (Error) -> Failure
     ) {
         self.providers = builder()
+        self.completion = completion
         self.unavailable = unavailable()
         self.failure = failure
     }
@@ -184,6 +216,7 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
         }
     }
     
+    // TODO: Consider extracting this out to a testable type or someting. It could make sense, but it also requires a lot of dependencies to do the calculation–which might be ugly?
     /// Creates the control handler for a push
     @MainActor // Needed for CI reasons
     private func control(
@@ -201,9 +234,12 @@ public struct Flow<Unavailable, Failure>: View where Unavailable: View, Failure:
                 if let next = try await push.next(proxy: proxy) {
                     navigationpath.append(next)
                 }
-                // No more screens are available, lets dismiss
+                // No more screens are available, lets run the completion and see if we should dismiss
                 else {
-                    dismiss()
+                    let result = try await completion(proxy)
+                    if result == .dismiss {
+                        dismiss()
+                    }
                 }
             }
             // Push the failure screen
