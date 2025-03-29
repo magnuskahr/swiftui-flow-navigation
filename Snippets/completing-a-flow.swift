@@ -11,7 +11,7 @@ struct FlowReaderExample: View {
             SelectUserIdFlowScreen()
             FlowReader { proxy in
                 let userID = try proxy.data(for: SelectUserIdFlowScreen.self)
-                try await service.deleteUser(id: userID)
+                let _ = try await service.deleteUser(id: userID)
                 // Success! lets show a screen:
                 SuccessScreen()
             }
@@ -21,7 +21,8 @@ struct FlowReaderExample: View {
 }
 // snippet.CompletionExample
 // snippet.hide
-struct CompletionExample Service()
+struct CompletionExample: View {
+    let service = Service()
     var body: some View {
         // snippet.show
         Flow {
