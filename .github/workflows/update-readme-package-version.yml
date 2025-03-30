@@ -23,14 +23,14 @@ jobs:
       - name: Extract version from tag
         id: get_version
         run: |
-          RAW_TAG=${{ github.event.release.tag_name }}
+          RAW_TAG=$(git describe --tags --abbrev=0)
           CLEAN_TAG=${RAW_TAG#v}
           echo "version=$CLEAN_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md with new version
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
-          sed -i 's|\(.package(url: "https://github.com/magnuskahr/swiftui-flow-navigation", from: "\)[^"]\+\("\))|\1'"$VERSION"'\2|' README.md
+          sed -i -E "s|(.package\(url: \"https://github.com/magnuskahr/swiftui-flow-navigation\", from: \")[^\"]+(\"\))|\1$VERSION\2|" README.md
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add README.md
