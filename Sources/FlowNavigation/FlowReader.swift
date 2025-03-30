@@ -17,12 +17,14 @@ import SwiftUI
 /// ```
 ///
 /// You can also depend on the output of an earlier screen to show a conditional screen:
-/// ```FlowReader { proxy in
+/// ```swift
+/// FlowReader { proxy in
 ///     let user = try proxy.data(for: UserSelectionScreen.self)
 ///     if user.tier == .free {
 ///         UpsellScreen()
 ///     }
 /// }
+/// ```
 ///
 /// - Note: The closure is async, so you can use it to load data for the screen.
 public struct FlowReader: FlowScreenProvider {
