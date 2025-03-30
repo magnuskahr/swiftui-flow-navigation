@@ -15,28 +15,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Checkout PR branch
-        run: |
-          git fetch origin ${{ github.head_ref }}
-          git checkout ${{ github.head_ref }}
-
-      - name: Extract version from tag
+          fetch-depth: 0  # Important: fetch all history and tags
+      
+      - name: Get latest tag
         id: get_version
         run: |
-          RAW_TAG=$(git describe --tags --abbrev=0)
-          CLEAN_TAG=${RAW_TAG#v}
-          echo "version=$CLEAN_TAG" >> "$GITHUB_OUTPUT"
-
+          TAG=$(git describe --tags --abbrev=0)
+          VERSION=${TAG#v}  # strip 'v' prefix
+          echo "VERSION=$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      
       - name: Update README.md with new version
         run: |
           VERSION=${{ steps.get_version.outputs.version }}
+          echo "Using version: $VERSION"
           sed -i -E "s|(.package\(url: \"https://github.com/magnuskahr/swiftui-flow-navigation\", from: \")[^\"]+(\"\))|\1$VERSION\2|" README.md
-          git diff --quiet README.md || {
+      
+          if git diff --quiet README.md; then
+            echo "README already up to date."
+          else
             git config user.name "github-actions"
             git config user.email "github-actions@github.com"
             git add README.md
             git commit -m "Update README to version $VERSION"
             git push
-          }
+          fi
