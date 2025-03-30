@@ -1,7 +1,7 @@
 name: Update README package version
 
 on:
-  pull_request:  # Runs when pushing to a pull request
+  pull_request:  # Runs when pushing to a pull request that targets main
     branches: [main]
 
 permissions:
