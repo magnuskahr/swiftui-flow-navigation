@@ -15,7 +15,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Important: fetch all history and tags
+          fetch-depth: 0
+      
+      - name: Check out PR source branch
+        run: |
+          git fetch origin ${{ github.head_ref }}
+          git checkout ${{ github.head_ref }}
       
       - name: Get latest tag
         id: get_version
