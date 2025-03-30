@@ -4,6 +4,9 @@ on:
   pull_request:  # Runs when pushing to a pull request
     branches: [main]
 
+permissions:
+  contents: write
+  
 jobs:
   update-readme:
     runs-on: ubuntu-latest
