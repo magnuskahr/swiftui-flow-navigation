@@ -10,7 +10,7 @@ struct PassthroughFlowScreenProvider: FlowScreenProvider {
         self.container = FlowScreenContainer(screen: content)
     }
     
-    func screen(proxy: FlowProxy) async throws -> FlowScreenContainer {
+    func screen(proxy: FlowProxy) async throws -> FlowScreenContainer? {
         container
     }
 }

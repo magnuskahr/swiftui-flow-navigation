@@ -12,13 +12,23 @@ import SwiftUI
 /// ```swift
 /// FlowReader { proxy in
 ///     let userId = try proxy.data(for: UserSelectionScreen.self)
-///     return UserProfileScreen(userId: userId)
+///     UserProfileScreen(userId: userId)
 /// }
 /// ```
 ///
-/// - Note: The closure is async, so you can using it to load data for the screen.
+/// You can also depend on the output of an earlier screen to show a conditional screen:
+/// ```swift
+/// FlowReader { proxy in
+///     let user = try proxy.data(for: UserSelectionScreen.self)
+///     if user.tier == .free {
+///         UpsellScreen()
+///     }
+/// }
+/// ```
+///
+/// - Note: The closure is async, so you can use it to load data for the screen.
 public struct FlowReader: FlowScreenProvider {
-    private let handler: @MainActor (FlowProxy) async throws -> FlowScreenContainer
+    private let handler: @MainActor (FlowProxy) async throws -> FlowScreenContainer?
     
     /// Initializes a `FlowReader` that dynamically constructs a `FlowScreen`.
     ///
@@ -28,7 +38,7 @@ public struct FlowReader: FlowScreenProvider {
     ///
     /// - Parameter handler: A closure that receives a `FlowProxy` and asynchronously returns a `FlowScreen`.
     /// - Throws: An error if the `FlowScreen` cannot be created.
-    public init(@Builder handler: @MainActor @escaping (FlowProxy) async throws -> FlowScreenContainer) {
+    public init(@Builder handler: @MainActor @escaping (FlowProxy) async throws -> FlowScreenContainer?) {
         self.handler = handler
     }
     
@@ -40,7 +50,7 @@ public struct FlowReader: FlowScreenProvider {
     /// - Parameter proxy: The `FlowProxy` containing output data from previous screens.
     /// - Returns: A dynamically created `FlowScreenContainer`.
     /// - Throws: An error if the screen cannot be created.
-    public func screen(proxy: FlowProxy) async throws -> FlowScreenContainer {
+    public func screen(proxy: FlowProxy) async throws -> FlowScreenContainer? {
         try await handler(proxy)
     }
     
@@ -49,23 +59,27 @@ public extension FlowReader {
     @MainActor
     @resultBuilder
     struct Builder {
-        public static func buildBlock(_ component: FlowScreenContainer) -> FlowScreenContainer {
+        public static func buildBlock(_ component: FlowScreenContainer?) -> FlowScreenContainer? {
             component
         }
         
-        public static func buildEither(first component: FlowScreenContainer) -> FlowScreenContainer {
+        public static func buildEither(first component: FlowScreenContainer?) -> FlowScreenContainer? {
             component
         }
         
-        public static func buildEither(second component: FlowScreenContainer) -> FlowScreenContainer {
+        public static func buildEither(second component: FlowScreenContainer?) -> FlowScreenContainer? {
             component
         }
         
-        public static func buildExpression(_ expression: FlowScreenContainer) -> FlowScreenContainer {
+        public static func buildOptional(_ component: FlowScreenContainer??) -> FlowScreenContainer? {
+            component ?? nil
+        }
+        
+        public static func buildExpression(_ expression: FlowScreenContainer?) -> FlowScreenContainer? {
             expression
         }
         
-        public static func buildExpression<S: FlowScreen>(_ expression: S) -> FlowScreenContainer {
+        public static func buildExpression<S: FlowScreen>(_ expression: S) -> FlowScreenContainer? {
             FlowScreenContainer(screen: expression)
         }
 

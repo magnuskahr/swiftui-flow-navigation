@@ -12,6 +12,12 @@ struct NavigationPushTests {
         }
     }
     
+    private struct NilFlowScreenProvider: FlowScreenProvider {
+        func screen(proxy: FlowProxy) async throws -> FlowScreenContainer? {
+            nil
+        }
+    }
+    
     private func provider(alias: String) -> PassthroughFlowScreenProvider {
         PassthroughFlowScreenProvider(
             container: FlowScreenContainer(screen: _Screen(), alias: alias)
@@ -79,5 +85,35 @@ struct NavigationPushTests {
         let push = try #require(await NavigationPush.build(from: [provider], proxy: emptyProxy))
         
         try #expect(await push.next(proxy: emptyProxy) == nil, "A next push should not exist")
+    }
+    
+    @Test
+    func testSkipsNilFlowScreenContainer() async throws {
+        let emptyProxy = FlowProxy(data: [:])
+        
+        let provider1: any FlowScreenProvider = provider(alias: "1")
+        let provider2: any FlowScreenProvider = NilFlowScreenProvider()
+        let (provider3, container3): (any FlowScreenProvider, FlowScreenContainer) = provider(alias: "3")
+        
+        let push = try #require(await NavigationPush.build(from: [provider1, provider2, provider3], proxy: emptyProxy))
+    
+        // provider2 returns `nil`, so we would expect no screen and the second push being container3
+        let nextPush = try #require(await push.next(proxy: emptyProxy), "A next push should exist")
+        #expect(nextPush.container.id == container3.id, "The second screen should match the provider3")
+    }
+    
+    @Test
+    func testNilContainerAsLastProviderFinishesAsNormalWithNil() async throws {
+        let emptyProxy = FlowProxy(data: [:])
+        
+        let provider1: any FlowScreenProvider = provider(alias: "1")
+        let provider2: any FlowScreenProvider = NilFlowScreenProvider()
+        
+        let push = try #require(await NavigationPush.build(from: [provider1, provider2], proxy: emptyProxy))
+    
+        // provider2 returns `nil`, so we would expect no screen and the second push being container3
+        let nextPush = try await push.next(proxy: emptyProxy)
+        
+        try #require(nextPush == nil, "The second and last provider returns a nil container")
     }
 }
