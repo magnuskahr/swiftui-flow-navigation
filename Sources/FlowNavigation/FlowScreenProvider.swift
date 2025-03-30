@@ -14,5 +14,5 @@ public protocol FlowScreenProvider {
     /// - Parameter proxy: A `FlowProxy` that provides access to output data from earlier screens in the flow.
     /// - Returns: A `FlowScreenContainer` that encapsulates the generated `FlowScreen` and its metadata.
     /// - Throws: An error if the screen cannot be createds.
-    func screen(proxy: FlowProxy) async throws -> FlowScreenContainer
+    func screen(proxy: FlowProxy) async throws -> FlowScreenContainer?
 }

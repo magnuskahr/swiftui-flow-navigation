@@ -82,8 +82,11 @@ struct NavigationPush: Hashable {
         
         repeat {
             let provider = remainder.removeFirst()
-            let container = try await provider.screen(proxy: proxy)
-            return NavigationPush(container: container, remainder: remainder)
+            if let container = try await provider.screen(proxy: proxy) {
+                return NavigationPush(container: container, remainder: remainder)
+            }
         } while !remainder.isEmpty
+        
+        return nil
     }
 }

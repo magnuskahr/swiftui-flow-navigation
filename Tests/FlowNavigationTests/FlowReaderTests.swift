@@ -34,7 +34,7 @@ struct FlowReaderTests {
             ScreenA()
         }
         let emptyProxy = FlowProxy(data: [:])
-        let output = try await reader.screen(proxy: emptyProxy)
+        let output = try #require(await reader.screen(proxy: emptyProxy))
         
         #expect(output.id == FlowScreenId(for: ScreenA.self))
     }
@@ -44,7 +44,7 @@ struct FlowReaderTests {
             ScreenA().alias("a")
         }
         let emptyProxy = FlowProxy(data: [:])
-        let output = try await reader.screen(proxy: emptyProxy)
+        let output = try #require(await reader.screen(proxy: emptyProxy))
         
         #expect(output.id == FlowScreenId(for: ScreenA.self, alias: "a"))
     }
@@ -61,7 +61,7 @@ struct FlowReaderTests {
         }
         
         let emptyProxy = FlowProxy(data: [:])
-        let output = try await reader.screen(proxy: emptyProxy)
+        let output = try #require(await reader.screen(proxy: emptyProxy))
         
         #expect(output.id == FlowScreenId(for: ScreenA.self))
         #expect(didRun)
@@ -77,11 +77,35 @@ struct FlowReaderTests {
         }
         
         let proxyA = FlowProxy(data: [FlowScreenId(for: ScreenC.self): Screen.a])
-        let outputA = try await reader.screen(proxy: proxyA)
+        let outputA = try #require(await reader.screen(proxy: proxyA))
         #expect(outputA.id == FlowScreenId(for: ScreenA.self))
         
         let proxyB = FlowProxy(data: [FlowScreenId(for: ScreenC.self): Screen.b])
-        let outputB = try await reader.screen(proxy: proxyB)
+        let outputB = try #require(await reader.screen(proxy: proxyB))
         #expect(outputB.id == FlowScreenId(for: ScreenB.self))
+    }
+    
+    @Test func testFlowReaderCanReturnNil() async throws {
+        let reader = FlowReader { proxy in
+            nil
+        }
+        
+        let emptyProxy = FlowProxy(data: [:])
+        let output = try await reader.screen(proxy: emptyProxy)
+        
+        #expect(output == nil)
+    }
+    
+    @Test func testFlowReaderBuilderCanGoWithoutElseClause() async throws {
+        let reader = FlowReader { proxy in
+            if try proxy.data(for: ScreenC.self) == .b {
+                ScreenB()
+            }
+        }
+        
+        let emptyProxy = FlowProxy(data: [FlowScreenId(for: ScreenC.self): Screen.b])
+        let output = try #require(await reader.screen(proxy: emptyProxy))
+        
+        #expect(output.id == FlowScreenId(for: ScreenB.self))
     }
 }
