@@ -1,8 +1,8 @@
-name: Update README package version on Release
+name: Update README package version
 
 on:
-  release:
-    types: [published]
+  pull_request:  # Runs when pushing to a pull request
+    branches: [main]
 
 jobs:
   update-readme:
