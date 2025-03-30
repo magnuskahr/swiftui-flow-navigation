@@ -12,12 +12,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout PR branch
+        run: |
+          git fetch origin ${{ github.head_ref }}
+          git checkout ${{ github.head_ref }}
+
       - name: Extract version from tag
         id: get_version
         run: |
           RAW_TAG=${{ github.event.release.tag_name }}
-          CLEAN_TAG=${RAW_TAG#v}  # strip leading 'v' if present
-          echo "version=$CLEAN_TAG" >> $GITHUB_OUTPUT
+          CLEAN_TAG=${RAW_TAG#v}
+          echo "version=$CLEAN_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Update README.md with new version
         run: |
