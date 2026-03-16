@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A view that renders a `FlowScreen` and ensures it supports using SwiftUI propperty wrappers.
+/// A view that renders a `FlowScreen` and ensures it supports using SwiftUI property wrappers.
 struct FlowScreenView: View {
     let body: AnyView
     
