@@ -17,7 +17,7 @@ import SwiftUI
 public struct FlowProxy: Sendable {
     let data: [FlowScreenId: any Sendable]
     
-    struct DataUnavailable: Error {
+    struct DataUnavailable: LocalizedError {
         let screenId: FlowScreenId
         
         var errorDescription: String? {
@@ -75,14 +75,14 @@ public struct FlowProxy: Sendable {
         
         let key = FlowScreenId(for: S.self, alias: alias)
         
-        guard data.keys.contains(key) else {
+        guard let raw = data[key] else {
             throw DataUnavailable(screenId: key)
         }
-        
-        guard let output = data[key] as? S.Output else {
+
+        guard let output = raw as? S.Output else {
             throw DataTypeMismatch(screenId: key)
         }
-        
+
         return output
     }
 }
